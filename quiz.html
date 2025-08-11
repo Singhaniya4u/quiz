@@ -6,7 +6,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Take Quiz</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="quizStyle.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(to bottom right, #0d9488, #0891b2);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .container {
+            max-width: 600px;
+        }
+
+        .quiz-box {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
+        }
+
+        h2 {
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #212529;
+            text-align: center;
+        }
+
+        .question-block {
+            border: 1px solid #dee2e6;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            background-color: #f8f9fa;
+        }
+
+        .question-block h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #495057;
+        }
+
+        .question-block .form-check-label {
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .btn-primary-teal {
+            background-color: #0d9488;
+            border-color: #0d9488;
+            color: #fff;
+            font-weight: 600;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s ease-in-out;
+            width: 100%;
+        }
+
+        .btn-primary-teal:hover {
+            background-color: #0d796e;
+            border-color: #0d796e;
+        }
+
+        .alert-success {
+            color: #0f5132;
+            background-color: #d1e7dd;
+            border-color: #badbcc;
+        }
+
+        .alert-danger {
+            color: #842029;
+            background-color: #f8d7da;
+            border-color: #f5c2c7;
+        }
+    </style>
 </head>
 
 <body>
