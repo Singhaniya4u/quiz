@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Collaborative Quiz Platform</title>
+    <!-- Author name : Shivnath Kumar -->
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(to bottom right, #0d9488, #0891b2); /* Gradient similar to previous teal/cyan */
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem; /* Equivalent to p-4 */
+        }
+        .container {
+            max-width: 500px; /* Adjusted max-width for better fit with Bootstrap default padding */
+            width: 100%;
+        }
+        .form-box {
+            background-color: #fff;
+            padding: 2rem; /* Equivalent to p-8 */
+            border-radius: 0.75rem; /* Equivalent to rounded-xl */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Equivalent to shadow-lg */
+            margin-bottom: 1.5rem; /* For spacing between sections */
+        }
+        h2 {
+            margin-bottom: 1.5rem; /* Equivalent to mb-6 */
+            font-size: 1.5rem; /* Equivalent to text-2xl */
+            font-weight: 600; /* Equivalent to font-semibold */
+            color: #212529; /* Dark gray for text */
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin-top: 1rem; /* Equivalent to mt-4 */
+            margin-bottom: 0.25rem; /* Equivalent to mb-1 */
+            font-size: 0.875rem; /* Equivalent to text-sm */
+            font-weight: 500; /* Equivalent to font-medium */
+            color: #495057; /* Bootstrap gray */
+        }
+        input[type="email"],
+        input[type="password"],
+        input[type="text"] {
+            width: 100%;
+            padding: 0.75rem; /* Equivalent to p-3 */
+            border: 1px solid #ced4da; /* Bootstrap default border */
+            border-radius: 0.375rem; /* Equivalent to rounded-lg */
+            font-size: 1rem;
+        }
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #80bdff; /* Bootstrap focus blue */
+            box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25); /* Bootstrap focus shadow */
+        }
+
+        /* Custom checkbox appearance overrides Bootstrap's default */
+        input[type="checkbox"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #D1D5DB; /* Gray-300 */
+            border-radius: 6px; /* Rounded-lg */
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s ease-in-out;
+            margin-right: 0.5rem; /* Space between checkbox and text */
+            display: inline-flex; /* Use flex to center checkmark */
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0; /* Prevent shrinking */
+            vertical-align: middle;
+        }
+
+        input[type="checkbox"]:checked {
+            background-color: #0d9488; /* Teal-600 */
+            border-color: #0d9488;
+        }
+
+        input[type="checkbox"]:checked::after {
+            content: '✔';
+            color: white;
+            font-size: 14px;
+        }
+
+        input[type="checkbox"]:focus {
+            box-shadow: 0 0 0 0.25rem rgba(13, 148, 136, 0.4); /* Focus ring for accessibility */
+        }
+
+        .terms .form-check-label {
+            display: flex;
+            align-items: center;
+            font-size: 0.875rem; /* text-sm */
+            color: #6c757d; /* gray-600 */
+            cursor: pointer;
+        }
+
+        .btn-primary-teal {
+            background-color: #0d9488; /* Teal-600 */
+            border-color: #0d9488;
+            color: #fff;
+            font-weight: 600; /* font-semibold */
+            padding: 0.75rem 1rem; /* py-3 px-4 */
+            border-radius: 0.5rem; /* rounded-lg */
+            transition: background-color 0.3s ease-in-out;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+            width: 100%; /* w-full */
+            margin-top: 1.5rem; /* mt-6 */
+        }
+        .btn-primary-teal:hover {
+            background-color: #0d796e; /* Darker teal */
+            border-color: #0d796e;
+            color: #fff; /* Ensure text color remains white on hover */
+        }
+
+        .btn-secondary-blue {
+            background-color: #3b82f6; /* Blue-500 */
+            border-color: #3b82f6;
+            color: #fff;
+            font-weight: 600;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s ease-in-out;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            width: 100%;
+            margin-top: 1rem; /* mt-4 */
+        }
+        .btn-secondary-blue:hover {
+            background-color: #2563eb; /* Darker blue */
+            border-color: #2563eb;
+            color: #fff;
+        }
+
+        .btn-red {
+            background-color: #dc3545; /* Bootstrap danger */
+            border-color: #dc3545;
+            color: #fff;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem; /* py-3 px-6 */
+            border-radius: 0.5rem; /* rounded-lg */
+            transition: background-color 0.3s ease-in-out;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .btn-red:hover {
+            background-color: #c82333; /* Darker red */
+            border-color: #c82333;
+            color: #fff;
+        }
+
+        .text-link {
+            color: #0d9488; /* Teal-600 */
+            text-decoration: none;
+        }
+        .text-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Styling for dynamically added questions in quiz creation */
+        .question-block-create {
+            border: 1px solid #dee2e6; /* Bootstrap border color */
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            background-color: #f8f9fa; /* Light gray */
+        }
+        .question-block-create h3 {
+            font-size: 1.125rem; /* text-lg */
+            font-weight: 600; /* font-semibold */
+            margin-bottom: 0.5rem; /* mb-2 */
+            color: #495057; /* gray-700 */
+        }
+        .question-block-create .form-control {
+            padding: 0.5rem; /* p-2 */
+            border-radius: 0.375rem; /* rounded-lg */
+            margin-bottom: 0.75rem; /* mb-3 */
+        }
+        .question-block-create .form-check-input-radio {
+            height: 1rem; /* h-4 */
+            width: 1rem; /* w-4 */
+            margin-right: 0.5rem; /* mr-2 */
+            vertical-align: middle;
+            background-color: #0d9488; /* Teal-600 */
+            border-color: #0d9488;
+            border-radius: 50%; /* Rounded */
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+        }
+        .question-block-create .form-check-input-radio:checked {
+             background-color: #0d9488; /* Teal-600 */
+             border-color: #0d9488;
+        }
+        .question-block-create .form-check-input-radio:focus {
+            box-shadow: 0 0 0 0.25rem rgba(13, 148, 136, 0.4);
+        }
+        .message-area {
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        .text-success { color: #198754 !important; } /* Bootstrap success color */
+        .text-danger { color: #dc3545 !important; } /* Bootstrap danger color */
+        .text-info { color: #0dcaf0 !important; } /* Bootstrap info color (for blue message) */
+
+        .quiz-card {
+            background-color: #f8f9fa; /* bg-gray-100 */
+            padding: 1rem; /* p-4 */
+            border-radius: 0.5rem; /* rounded-lg */
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .quiz-card h3 {
+            font-size: 1.125rem; /* text-lg */
+            font-weight: 600; /* font-semibold */
+            color: #212529; /* text-gray-800 */
+            margin-bottom: 0.25rem;
+        }
+        .quiz-card p {
+            font-size: 0.875rem; /* text-sm */
+            color: #6c757d; /* text-gray-600 */
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Login Form -->
+        <div id="loginSection" class="form-box">
+            <h2>Login</h2>
+            <form id="loginForm">
+                <div class="mb-3">
+                    <label for="loginEmail" class="form-label">Email</label>
+                    <input type="email" id="loginEmail" name="loginEmail" required
+                           class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label for="loginPassword" class="form-label">Password</label>
+                    <input type="password" id="loginPassword" name="loginPassword" required
+                           class="form-control" />
+                </div>
+                <button type="submit" class="btn btn-primary-teal">
+                    Login
+                </button>
+            </form>
+            <p class="text-center text-muted mt-4">Don't have an account? <a href="#" id="showRegister" class="text-link">Register here</a>.</p>
+        </div>
+
+        <!-- Registration Form -->
+        <div id="registerSection" class="form-box" style="display: none;">
+            <h2>Registration</h2>
+            <form id="registerForm">
+                <div class="mb-3">
+                    <label for="registerEmail" class="form-label">Email</label>
+                    <input type="email" id="registerEmail" name="registerEmail" required
+                           class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label for="registerPassword" class="form-label">Password</label>
+                    <input type="password" id="registerPassword" name="registerPassword" required
+                           class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required
+                           class="form-control" />
+                </div>
+                <div class="mb-3 form-check terms">
+                    <input type="checkbox" id="registerTerms" required
+                           class="form-check-input" />
+                    <label for="registerTerms" class="form-check-label">
+                        I have read and accepted the <a href="#" class="text-link ms-1">Terms & Conditions*</a>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary-teal">
+                    Register
+                </button>
+            </form>
+            <p class="text-center text-muted mt-4">Already have an account? <a href="#" id="showLogin" class="text-link">Login here</a>.</p>
+        </div>
+
+        <!-- Quiz Creation Section -->
+        <div id="quizCreationSection" class="form-box" style="display: none;">
+            <h2>Create New Quiz</h2>
+            <form id="quizForm">
+                <div class="mb-3">
+                    <label for="quizTitle" class="form-label">Quiz Title</label>
+                    <input type="text" id="quizTitle" name="quizTitle" required
+                           class="form-control" />
+                </div>
+
+                <div id="questionsContainer">
+                    <!-- Questions will be dynamically added here -->
+                </div>
+
+                <button type="button" id="addQuestionBtn" class="btn btn-secondary-blue mt-3">
+                    Add Question
+                </button>
+
+                <button type="submit" id="saveQuizBtn" class="btn btn-primary-teal mt-3">
+                    Save Quiz
+                </button>
+            </form>
+            <div id="quizLinksArea" class="text-center mt-4">
+                <!-- Quiz links will appear here -->
+            </div>
+            <p class="text-center text-muted mt-4">
+                <a href="#" id="viewAllQuizzesLink" class="text-link">View All My Quizzes</a>
+            </p>
+        </div>
+
+        <!-- Quiz List/Dashboard Section -->
+        <div id="quizDashboardSection" class="form-box" style="display: none;">
+            <h2>My Quizzes</h2>
+            <div id="quizzesList" class="d-flex flex-column gap-3">
+                <!-- List of created quizzes will appear here -->
+            </div>
+            <p class="text-center text-muted mt-4">
+                <a href="#" id="createQuizLink" class="text-link">Create New Quiz</a>
+            </p>
+        </div>
+
+        <!-- Logout Button & Message Area -->
+        <div class="text-center mt-4">
+            <button id="logoutBtn" style="display: none;"
+                    class="btn btn-red">
+                Logout
+            </button>
+            <p id="messageArea" class="message-area"></p>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS CDN (Popper and Bootstrap JS bundle) -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" xintegrity="sha384-I7E8VVD/ismYTF4hNIPjVpCPyHv/QWqQG2TTn" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" xintegrity="sha384-0pUGZvbkm6XF6gxjEnlcoJoZGa3j+mJ7uMT+d" crossorigin="anonymous"></script>
+
+    <script>
+        
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const loginSection = document.getElementById('loginSection');
+        const registerSection = document.getElementById('registerSection');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const messageArea = document.getElementById('messageArea');
+        const showRegisterLink = document.getElementById('showRegister');
+        const showLoginLink = document.getElementById('showLogin');
+
+        // Quiz Creation Elements
+        const quizCreationSection = document.getElementById('quizCreationSection');
+        const quizForm = document.getElementById('quizForm');
+        const quizTitleInput = document.getElementById('quizTitle');
+        const questionsContainer = document.getElementById('questionsContainer');
+        const addQuestionBtn = document.getElementById('addQuestionBtn');
+        const saveQuizBtn = document.getElementById('saveQuizBtn');
+        const quizLinksArea = document.getElementById('quizLinksArea');
+        const viewAllQuizzesLink = document.getElementById('viewAllQuizzesLink');
+        const createQuizLink = document.getElementById('createQuizLink');
+
+
+        // Quiz Dashboard Elements
+        const quizDashboardSection = document.getElementById('quizDashboardSection');
+        const quizzesList = document.getElementById('quizzesList');
+
+        let questionCounter = 0; // To ensure unique IDs for dynamically added questions
+
+        /**
+         * Updates the UI based on the user's login status stored in localStorage.
+         * Hides/shows login, registration forms, and the logout button accordingly.
+         */
+        function updateUI() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            messageArea.textContent = ''; // Clear message every UI update
+
+            if (isLoggedIn === 'true') {
+                // User is logged in
+                loginSection.style.display = 'none';
+                registerSection.style.display = 'none';
+                logoutBtn.style.display = 'block';
+                quizCreationSection.style.display = 'block'; // Show quiz creation by default
+                quizDashboardSection.style.display = 'none'; // Hide dashboard initially
+                messageArea.textContent = 'You are logged in. Create a new quiz!';
+                messageArea.className = 'message-area text-success'; // Bootstrap class for success color
+            } else {
+                // User is logged out
+                loginSection.style.display = 'block';
+                registerSection.style.display = 'none'; // Default to showing login, hiding register
+                logoutBtn.style.display = 'none';
+                quizCreationSection.style.display = 'none'; // Hide quiz creation
+                quizDashboardSection.style.display = 'none'; // Hide dashboard
+                messageArea.textContent = ''; // Clear message when logged out
+                messageArea.className = 'message-area'; // Reset class
+            }
+        }
+
+        /**
+         * Adds a new question input block to the quiz creation form.
+         * Includes fields for question text, four answer options, and a correct answer selection.
+         */
+        addQuestionBtn.addEventListener('click', function() {
+            questionCounter++;
+            const questionBlock = document.createElement('div');
+            questionBlock.className = 'question-block-create'; // Custom class for styling
+            questionBlock.innerHTML = `
+                <h3 class="mb-3">Question ${questionCounter}</h3>
+                <div class="mb-3">
+                    <label for="questionText${questionCounter}" class="form-label">Question Text</label>
+                    <input type="text" id="questionText${questionCounter}" name="questionText${questionCounter}" required
+                           class="form-control" />
+                </div>
+
+                <label class="form-label mt-2">Answers:</label>
+                <div class="d-flex flex-column gap-2">
+                    ${['A', 'B', 'C', 'D'].map((option, index) => `
+                        <div class="form-check d-flex align-items-center">
+                            <input type="radio" id="correctAnswer${questionCounter}-${option}" name="correctAnswer${questionCounter}" value="${option}" class="form-check-input form-check-input-radio" ${index === 0 ? 'checked' : ''}>
+                            <label for="correctAnswer${questionCounter}-${option}" class="form-check-label me-2">${option}.</label>
+                            <input type="text" id="answer${questionCounter}${option}" name="answer${questionCounter}${option}" required
+                                   class="form-control" />
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            questionsContainer.appendChild(questionBlock);
+        });
+
+        /**
+         * Handles the submission of the registration form.
+         * Performs client-side validation for password matching and stores user credentials in localStorage.
+         */
+        registerForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const termsAccepted = document.getElementById('registerTerms').checked;
+
+            // Simple client-side validation
+            if (password === '' || confirmPassword === '') {
+                messageArea.textContent = 'Error: Password fields cannot be empty.';
+                messageArea.className = 'message-area text-danger';
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                messageArea.textContent = 'Error: Passwords do not match!';
+                messageArea.className = 'message-area text-danger';
+                return;
+            }
+
+            if (!termsAccepted) {
+                messageArea.textContent = 'Error: You must accept the Terms & Conditions.';
+                messageArea.className = 'message-area text-danger';
+                return;
+            }
+
+            // Simulate registration success by storing credentials (for demonstration only!)
+            // In a real application, NEVER store passwords in localStorage like this.
+            localStorage.setItem('userEmail', email);
+            localStorage.setItem('userPassword', password);
+            localStorage.removeItem('isLoggedIn'); // Ensure user is logged out after registration
+            messageArea.textContent = 'Registration successful! Please log in.';
+            messageArea.className = 'message-area text-success';
+
+            // Switch to login form after successful registration
+            loginSection.style.display = 'block';
+            registerSection.style.display = 'none';
+            loginForm.reset(); // Clear login form fields
+            registerForm.reset(); // Clear registration form fields
+            quizForm.reset(); // Clear quiz form fields too
+            questionsContainer.innerHTML = ''; // Clear questions
+            questionCounter = 0; // Reset question counter
+        });
+
+        /**
+         * Handles the submission of the login form.
+         * Validates credentials against stored localStorage values and simulates login.
+         */
+        loginForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const storedEmail = localStorage.getItem('userEmail');
+            const storedPassword = localStorage.getItem('userPassword');
+
+            if (email === storedEmail && password === storedPassword) {
+                localStorage.setItem('isLoggedIn', 'true'); // Set login flag
+                messageArea.textContent = 'Login successful!';
+                messageArea.className = 'message-area text-success';
+                loginForm.reset(); // Clear login form fields
+                updateUI(); // Update UI to show logged-in state
+            } else {
+                messageArea.textContent = 'Error: Invalid email or password.';
+                messageArea.className = 'message-area text-danger';
+            }
+        });
+
+        /**
+         * Handles the logout button click.
+         * Removes login and user data from localStorage and updates the UI.
+         */
+        logoutBtn.addEventListener('click', function() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('userEmail'); // Clear stored email
+            localStorage.removeItem('userPassword'); // Clear stored password
+            messageArea.textContent = 'You have been logged out.';
+            messageArea.className = 'message-area text-info'; // Using text-info for blue message
+            quizForm.reset(); // Clear quiz form fields
+            questionsContainer.innerHTML = ''; // Clear questions
+            questionCounter = 0; // Reset question counter
+            quizLinksArea.innerHTML = ''; // Clear quiz links
+            updateUI(); // Update UI to show logged-out state
+        });
+
+        /**
+         * Handles saving the created quiz.
+         * Collects quiz title and all questions/answers, then stores them in localStorage.
+         */
+        quizForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const quizTitle = quizTitleInput.value.trim();
+            if (!quizTitle) {
+                messageArea.textContent = 'Error: Quiz title cannot be empty.';
+                messageArea.className = 'message-area text-danger';
+                return;
+            }
+
+            const questions = [];
+            for (let i = 1; i <= questionCounter; i++) {
+                const questionText = document.getElementById(`questionText${i}`).value.trim();
+                const answers = [];
+                let correctAnswer = '';
+
+                // Validate question text
+                if (!questionText) {
+                    messageArea.textContent = `Error: Question ${i} text cannot be empty.`;
+                    messageArea.className = 'message-area text-danger';
+                    return;
+                }
+
+                // Collect answers and correct answer
+                let hasValidAnswers = false;
+                for (const option of ['A', 'B', 'C', 'D']) {
+                    const answerText = document.getElementById(`answer${i}${option}`).value.trim();
+                    if (answerText) {
+                        answers.push({ option: option, text: answerText });
+                        hasValidAnswers = true;
+                    }
+                    if (document.getElementById(`correctAnswer${i}-${option}`).checked) {
+                        correctAnswer = option;
+                    }
+                }
+
+                // Validate at least one answer and a correct answer are provided
+                if (!hasValidAnswers) {
+                    messageArea.textContent = `Error: Question ${i} must have at least one answer option.`;
+                    messageArea.className = 'message-area text-danger';
+                    return;
+                }
+                if (!correctAnswer) {
+                    messageArea.textContent = `Error: Please select a correct answer for Question ${i}.`;
+                    messageArea.className = 'message-area text-danger';
+                    return;
+                }
+
+                questions.push({
+                    id: `q${i}`,
+                    text: questionText,
+                    answers: answers,
+                    correctAnswer: correctAnswer
+                });
+            }
+
+            if (questions.length === 0) {
+                messageArea.textContent = 'Error: Please add at least one question to the quiz.';
+                messageArea.className = 'message-area text-danger';
+                return;
+            }
+
+            // Generate a unique ID for the quiz
+            const quizId = `quiz-${Date.now()}`;
+            const newQuiz = {
+                id: quizId,
+                title: quizTitle,
+                questions: questions
+            };
+
+            // Retrieve existing quizzes from localStorage or initialize an empty array
+            const storedQuizzes = JSON.parse(localStorage.getItem('quizzes')) || [];
+            storedQuizzes.push(newQuiz);
+            localStorage.setItem('quizzes', JSON.stringify(storedQuizzes));
+
+            messageArea.textContent = `Quiz "${quizTitle}" saved successfully!`;
+            messageArea.className = 'message-area text-success';
+
+            // Display shareable link (for future step, just a placeholder for now)
+            const quizLink = `${window.location.origin}/quiz.html?id=${quizId}`; // This will be used in future steps
+            quizLinksArea.innerHTML = `
+                <p class="text-muted mt-4">Share this link:</p>
+                <a href="${quizLink}" target="_blank" class="text-link break-all">${quizLink}</a>
+                <button onclick="copyToClipboard('${quizLink}')" class="btn btn-sm btn-outline-secondary ms-2">Copy</button>
+            `;
+
+            quizForm.reset(); // Clear quiz form fields
+            questionsContainer.innerHTML = ''; // Clear dynamically added questions
+            questionCounter = 0; // Reset question counter
+        });
+
+        /**
+         * Function to copy text to clipboard.
+         * @param {string} text The text to copy.
+         */
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy'); // Fallback for older browsers
+            document.body.removeChild(textarea);
+            messageArea.textContent = 'Link copied to clipboard!';
+            messageArea.className = 'message-area text-info';
+        }
+
+        /**
+         * Displays the list of all created quizzes in the dashboard section.
+         */
+        function displayAllQuizzes() {
+            quizCreationSection.style.display = 'none';
+            quizDashboardSection.style.display = 'block';
+            quizzesList.innerHTML = ''; // Clear previous list
+
+            const storedQuizzes = JSON.parse(localStorage.getItem('quizzes')) || [];
+
+            if (storedQuizzes.length === 0) {
+                quizzesList.innerHTML = '<p class="text-muted text-center">No quizzes created yet. Create one!</p>';
+                return;
+            }
+
+            storedQuizzes.forEach(quiz => {
+                const quizCard = document.createElement('div');
+                quizCard.className = 'quiz-card'; // Custom class for styling
+                quizCard.innerHTML = `
+                    <div>
+                        <h3>${quiz.title}</h3>
+                        <p>${quiz.questions.length} questions</p>
+                    </div>
+                    <div>
+                        <a href="${window.location.origin}/quiz.html?id=${quiz.id}" target="_blank" class="btn btn-sm btn-info text-white me-2">Take Quiz</a>
+                        <button class="btn btn-sm btn-primary">View Scores (Coming Soon)</button>
+                    </div>
+                `;
+                quizzesList.appendChild(quizCard);
+            });
+        }
+
+        // Event listeners for switching between sections
+        showRegisterLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            loginSection.style.display = 'none';
+            registerSection.style.display = 'block';
+            messageArea.textContent = ''; // Clear any previous messages
+        });
+
+        showLoginLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            registerSection.style.display = 'none';
+            loginSection.style.display = 'block';
+            messageArea.textContent = ''; // Clear any previous messages
+        });
+
+        viewAllQuizzesLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            displayAllQuizzes();
+        });
+
+        createQuizLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            quizDashboardSection.style.display = 'none';
+            quizCreationSection.style.display = 'block';
+            quizForm.reset();
+            questionsContainer.innerHTML = '';
+            questionCounter = 0;
+            quizLinksArea.innerHTML = '';
+            messageArea.textContent = '';
+        });
+
+
+        // Initialize UI state when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', updateUI);
+    </script>
+</body>
+</html>

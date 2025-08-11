@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Take Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(to bottom right, #0d9488, #0891b2);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .container {
+            max-width: 600px;
+        }
+
+        .quiz-box {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
+        }
+
+        h2 {
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #212529;
+            text-align: center;
+        }
+
+        .question-block {
+            border: 1px solid #dee2e6;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            background-color: #f8f9fa;
+        }
+
+        .question-block h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #495057;
+        }
+
+        .question-block .form-check-label {
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .btn-primary-teal {
+            background-color: #0d9488;
+            border-color: #0d9488;
+            color: #fff;
+            font-weight: 600;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s ease-in-out;
+            width: 100%;
+        }
+
+        .btn-primary-teal:hover {
+            background-color: #0d796e;
+            border-color: #0d796e;
+        }
+
+        .alert-success {
+            color: #0f5132;
+            background-color: #d1e7dd;
+            border-color: #badbcc;
+        }
+
+        .alert-danger {
+            color: #842029;
+            background-color: #f8d7da;
+            border-color: #f5c2c7;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="quizContainer" class="quiz-box" style="display: none;">
+            <h2 id="quizTitle"></h2>
+            <form id="takeQuizForm">
+                <div id="questionsList">
+                </div>
+                <button type="submit" class="btn btn-primary-teal mt-4">Submit Quiz</button>
+            </form>
+        </div>
+        <div id="scoreContainer" class="quiz-box" style="display: none;">
+            <h2 class="text-center">Quiz Results</h2>
+            <div id="resultsContent" class="text-center">
+            </div>
+            <a href="#" class="btn btn-primary-teal mt-4" onclick="window.close();">Close Window</a>
+        </div>
+        <div id="messageBox" class="quiz-box text-center" style="display: none;">
+            <p id="messageText"></p>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const quizId = urlParams.get('id');
+
+            const quizContainer = document.getElementById('quizContainer');
+            const scoreContainer = document.getElementById('scoreContainer');
+            const quizTitleEl = document.getElementById('quizTitle');
+            const questionsListEl = document.getElementById('questionsList');
+            const takeQuizForm = document.getElementById('takeQuizForm');
+            const resultsContentEl = document.getElementById('resultsContent');
+            const messageBox = document.getElementById('messageBox');
+            const messageText = document.getElementById('messageText');
+
+            const storedQuizzes = JSON.parse(localStorage.getItem('quizzes')) || [];
+            const quiz = storedQuizzes.find(q => String(q.id) === String(quizId));
+
+            if (quiz) {
+                quizTitleEl.textContent = quiz.title || "Untitled Quiz";
+                quizContainer.style.display = 'block';
+                renderQuiz(quiz);
+            } else {
+                messageText.textContent = 'Error: Quiz not found.';
+                messageBox.style.display = 'block';
+            }
+
+            function renderQuiz(quizData) {
+                questionsListEl.innerHTML = '';
+                quizData.questions.forEach((question, index) => {
+                    const qId = question.id || index;
+                    const answers = question.answers || [];
+                    const questionBlock = document.createElement('div');
+                    questionBlock.className = 'question-block';
+
+                    questionBlock.innerHTML = `
+                <h3>Question ${index + 1}: ${question.text || ''}</h3>
+                ${answers.map(answer => `
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="question-${qId}" 
+                            id="q${qId}ans${answer.option}" 
+                            value="${answer.option}" required>
+                        <label class="form-check-label" for="q${qId}ans${answer.option}">
+                            ${answer.option}. ${answer.text}
+                        </label>
+                    </div>
+                `).join('')}
+            `;
+                    questionsListEl.appendChild(questionBlock);
+                });
+            }
+
+            takeQuizForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                let score = 0;
+                const totalQuestions = quiz.questions.length;
+                const userAnswers = {};
+
+                quiz.questions.forEach((question, index) => {
+                    const qId = question.id || index;
+                    const selectedOption = document.querySelector(`input[name="question-${qId}"]:checked`);
+                    if (selectedOption) {
+                        userAnswers[qId] = selectedOption.value;
+                    }
+                });
+
+                if (Object.keys(userAnswers).length < totalQuestions) {
+                    alert('Please answer all questions before submitting.');
+                    return;
+                }
+
+                quiz.questions.forEach((question, index) => {
+                    const qId = question.id || index;
+                    if (userAnswers[qId] === question.correctAnswer) {
+                        score++;
+                    }
+                });
+
+                quizContainer.style.display = 'none';
+                scoreContainer.style.display = 'block';
+                displayResults(score, totalQuestions, quiz);
+            });
+
+            function displayResults(score, total, quizData) {
+                let resultsHtml = `<p>You scored <strong>${score} out of ${total}</strong>!</p>`;
+                resultsHtml += '<hr class="my-4"><h4>Review your answers:</h4>';
+
+                quizData.questions.forEach((question, index) => {
+                    const qId = question.id || index;
+                    const selectedOption = document.querySelector(`input[name="question-${qId}"]:checked`);
+                    const userAnswer = selectedOption ? selectedOption.value : 'Not answered';
+                    const isCorrect = userAnswer === question.correctAnswer;
+                    const alertClass = isCorrect ? 'alert-success' : 'alert-danger';
+
+                    resultsHtml += `
+                <div class="alert ${alertClass} mb-3" role="alert">
+                    <strong>Question ${index + 1}:</strong> ${question.text}
+                    <br>
+                    Your Answer: <strong>${userAnswer}</strong>
+                    <br>
+                    Correct Answer: <strong>${question.correctAnswer}</strong>
+                </div>
+            `;
+                });
+
+                resultsContentEl.innerHTML = resultsHtml;
+            }
+        }); 
+    </script>
+</body>
+
+</html>
